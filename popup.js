@@ -31,36 +31,51 @@ function lazySSLverification(url) {
 }
 
 function suspiciousSymbolsCheck(url) {
-  const regex = /[^a-zA-Z0-9.:/-]/;
+  const regex = /[^a-zA-Z0-9.:\/\-?&]=/;
   return url.length > 200 || regex.test(url);
 }
 
-function getWhoisData(url) {
-  const domain = new URL(url).hostname;
-  fetch(`http://localhost:3000/whois/${domain}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log('WHOIS data:', data);
-      // Do something with the WHOIS data here
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      // Handle errors here
-    });
+function suspiciousNamesCheck(url) {
+  const names = ['.tk', '.ml', '.ga', '.cf', '.gq', '.iz.rs', '.nom.za', '.us.to', 'free', 'ipfs', 'weeblysite', 'glitch', 'blogspot'];
+  for (let i = 0; i < names.length; i += 1) {
+    if (url.includes(names[i])) return false;
+  }
+  return true;
 }
 
-function checkUrl(url) {
-  const result = similarityCheck(url);
-  if (result) document.getElementById('result').textContent = 'Safe';
-  else document.getElementById('result').textContent = 'Fishing alert';
-  console.log(lazySSLverification(url));
-  console.log(suspiciousSymbolsCheck(url));
-  console.log(getWhoisData(url));
+async function getWhoisData(url) {
+  const domain = new URL(url).hostname;
+  
+  try {
+    const response = await fetch(`http://localhost:3000/whois/${domain}`);
+    if (!response.ok) {
+      return null
+    }
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    return null;
+  }
+}
+
+async function checkUrl(url) {
+  const similarity = similarityCheck(url);
+  const sslAvailable = lazySSLverification(url);
+  const suspiciousSymbols = suspiciousSymbolsCheck(url);
+  const whois = await getWhoisData(url);
+  const suspiciousNames = suspiciousNamesCheck(url);
+  let oldDomain = true;
+
+  if (whois) {
+    console.log(whois);
+    const currentYear = new Date().getFullYear();
+    const creation = whois.data.created || whois.data.creationDate;
+    if (parseInt(creation.split(" ")[0]) == currentYear) oldDomain = false;
+  }
+
+  const result = (similarity + sslAvailable + !suspiciousSymbols + oldDomain + suspiciousNames) / 5 * 100;
+
+  document.getElementById('result').textContent = `URL safety score: ${result}%`;
 }
 
 async function getCurrentUrl() {
