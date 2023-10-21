@@ -1,0 +1,16 @@
+{
+  "name": "frauddef",
+  "version": "1.0.0",
+  "description": "An extension which checks URLs' safety",
+  "main": "popup.js",
+  "scripts": {
+    "lint": "eslint popup.js"
+  },
+  "author": "Ctrl Alt Elite",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.52.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.28.1"
+  }
+}
