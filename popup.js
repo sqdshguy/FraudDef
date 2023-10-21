@@ -31,7 +31,7 @@ function lazySSLverification(url) {
 }
 
 function suspiciousSymbolsCheck(url) {
-  const regex = /[^a-zA-Z0-9.:\/\-?&]=/;
+  const regex = /[^a-zA-Z0-9.:/\-?&]=/;
   return url.length > 200 || regex.test(url);
 }
 
@@ -45,11 +45,10 @@ function suspiciousNamesCheck(url) {
 
 async function getWhoisData(url) {
   const domain = new URL(url).hostname;
-  
   try {
     const response = await fetch(`http://localhost:3000/whois/${domain}`);
     if (!response.ok) {
-      return null
+      return null;
     }
     const data = await response.json();
     return data;
@@ -70,11 +69,10 @@ async function checkUrl(url) {
     console.log(whois);
     const currentYear = new Date().getFullYear();
     const creation = whois.data.created || whois.data.creationDate;
-    if (parseInt(creation.split(" ")[0]) == currentYear) oldDomain = false;
+    if (parseInt(creation.split(' ')[0], 10) === currentYear) oldDomain = false;
   }
-
-  const result = (similarity + sslAvailable + !suspiciousSymbols + oldDomain + suspiciousNames) / 5 * 100;
-
+  const result = ((similarity + sslAvailable + !suspiciousSymbols
+    + oldDomain + suspiciousNames) / 5) * 100;
   document.getElementById('result').textContent = `URL safety score: ${result}%`;
 }
 
