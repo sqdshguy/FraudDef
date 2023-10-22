@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Settings</title>
+
+        <link rel="stylesheet" href="assets/settings.css" />
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>FraudDef</h1>
+                <a href="popup.html"
+                    ><img src="assets/back-arrow.svg" class="back-arrow"
+                /></a>
+            </header>
+
+            <div class="frame">
+                <p class="tip">*Оберіть потрібні вам параметри для перевірки</p>
+
+                <div class="check-group">
+                    <p class="parameter">Дата реєстрації</p>
+                    <label class="switch">
+                        <input type="checkbox" checked data-id="domain_age" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="check-group">
+                    <p class="parameter">Кирилиця, знаки</p>
+                    <label class="switch">
+                        <input type="checkbox" checked data-id="cyrillic" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="check-group">
+                    <p class="parameter">Домен</p>
+                    <label class="switch">
+                        <input type="checkbox" checked data-id="domain" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="check-group">
+                    <p class="parameter">Статус SSL</p>
+                    <label class="switch">
+                        <input type="checkbox" checked data-id="ssl_status" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="check-group">
+                    <p class="parameter">Можливість<br />фішингу</p>
+                    <label class="switch">
+                        <input type="checkbox" checked data-id="phishing" />
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script src="settings.js"></script>
+</html>

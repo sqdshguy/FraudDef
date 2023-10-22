@@ -36,7 +36,21 @@ function suspiciousSymbolsCheck(url) {
 }
 
 function suspiciousNamesCheck(url) {
-  const names = ['.tk', '.ml', '.ga', '.cf', '.gq', '.iz.rs', '.nom.za', '.us.to', 'free', 'ipfs', 'weeblysite', 'glitch', 'blogspot'];
+  const names = [
+    '.tk',
+    '.ml',
+    '.ga',
+    '.cf',
+    '.gq',
+    '.iz.rs',
+    '.nom.za',
+    '.us.to',
+    'free',
+    'ipfs',
+    'weeblysite',
+    'glitch',
+    'blogspot',
+  ];
   for (let i = 0; i < names.length; i += 1) {
     if (url.includes(names[i])) return false;
   }
@@ -57,23 +71,135 @@ async function getWhoisData(url) {
   }
 }
 
-async function checkUrl(url) {
-  const similarity = similarityCheck(url);
-  const sslAvailable = lazySSLverification(url);
-  const suspiciousSymbols = suspiciousSymbolsCheck(url);
-  const whois = await getWhoisData(url);
-  const suspiciousNames = suspiciousNamesCheck(url);
-  let oldDomain = true;
+function setUnknownOwner() {
+  document.getElementById('owner').textContent = 'Невідомий';
+  const elems = document.querySelectorAll('#agesafe');
+  elems.forEach((elem) => {
+    elem.classList.add('peace');
+  });
+}
 
-  if (whois) {
-    console.log(whois);
-    const currentYear = new Date().getFullYear();
-    const creation = whois.data.created || whois.data.creationDate;
-    if (parseInt(creation.split(' ')[0], 10) === currentYear) oldDomain = false;
+async function checkUrl(url) {
+  if (!url) return;
+  url = url.toString();
+  if (!url.startsWith('http')) return;
+  let simEnabled = true;
+  let sslEnabled = true;
+  let suspiciousEnabled = true;
+  let whoisEnabled = true;
+  let suspiciousNamesEnabled = true;
+  let similarity = true;
+  let sslAvailable = true;
+  let suspiciousSymbols = false;
+  let whois = true;
+  let suspiciousNames = true;
+  let oldDomain = true;
+  const savedOptions = localStorage.getItem('userOptions');
+  if (savedOptions) {
+    const options = JSON.parse(savedOptions);
+    simEnabled = options.phishing;
+    sslEnabled = options.ssl_status;
+    suspiciousEnabled = options.cyrillic;
+    whoisEnabled = options.domain_age;
+    suspiciousNamesEnabled = options.domain;
   }
-  const result = ((similarity + sslAvailable + !suspiciousSymbols
-    + oldDomain + suspiciousNames) / 5) * 100;
-  document.getElementById('result').textContent = `URL safety score: ${result}%`;
+  if (simEnabled) similarity = similarityCheck(url);
+  if (sslEnabled) sslAvailable = lazySSLverification(url);
+  if (suspiciousEnabled) suspiciousSymbols = suspiciousSymbolsCheck(url);
+  if (whoisEnabled) whois = await getWhoisData(url);
+  if (suspiciousNamesEnabled) suspiciousNames = suspiciousNamesCheck(url);
+  if (whoisEnabled) {
+    if (whois) {
+      console.log(whois);
+      const currentYear = new Date().getFullYear();
+      const creation = whois.data.created || whois.data.creationDate;
+      if (creation) {
+        const dateObject = new Date(Date.parse(creation.split(' ')[0]));
+        if (dateObject.getFullYear() === currentYear) {
+          oldDomain = false;
+          document.getElementById(
+            'domain-registration-1',
+          ).textContent = dateObject.toLocaleString();
+        } else {
+          document.getElementById(
+            'domain-registration-2',
+          ).textContent = dateObject.toLocaleString();
+        }
+      } else {
+        document.getElementById('domain-registration-2').textContent = 'Невідомий';
+        document.getElementById('agesafe').classList.add('peace');
+      }
+      const owner = whois.data.adminOrganization
+                || whois.data.registrantOrganization
+                || whois.data.registrant
+                || whois.data.registrantName
+                || whois.data.techOrganization
+                || whois.data.techName;
+      if (owner) {
+        if (
+          owner.toLowerCase().includes('disclosed')
+                    || owner.toLowerCase().includes('redacted')
+        ) setUnknownOwner();
+        else document.getElementById('owner').textContent = owner;
+      } else setUnknownOwner();
+    } else setUnknownOwner();
+  }
+
+  if (!similarity) {
+    const elems = document.querySelectorAll('#phishing');
+    elems.forEach((elem) => {
+      elem.classList.remove('peace');
+    });
+    const elems2 = document.querySelectorAll('#phishingsafe');
+    elems2.forEach((elem) => {
+      elem.classList.add('peace');
+    });
+  }
+
+  if (!sslAvailable) {
+    const elems = document.querySelectorAll('#ssl');
+    elems.forEach((elem) => {
+      elem.classList.remove('peace');
+    });
+    const elems2 = document.querySelectorAll('#sslsafe');
+    elems2.forEach((elem) => {
+      elem.classList.add('peace');
+    });
+  }
+
+  if (suspiciousSymbols) {
+    const elems = document.querySelectorAll('#cyrillic');
+    elems.forEach((elem) => {
+      elem.classList.remove('peace');
+    });
+    const elems2 = document.querySelectorAll('#cyrillicsafe');
+    elems2.forEach((elem) => {
+      elem.classList.add('peace');
+    });
+  }
+
+  if (!suspiciousNames) {
+    const elems = document.querySelectorAll('#domain');
+    elems.forEach((elem) => {
+      elem.classList.remove('peace');
+    });
+    const elems2 = document.querySelectorAll('#domainsafe');
+    elems2.forEach((elem) => {
+      elem.classList.add('peace');
+    });
+  }
+
+  if (!oldDomain) {
+    const elems = document.querySelectorAll('#age');
+    elems.forEach((elem) => {
+      elem.classList.remove('peace');
+    });
+    const elems2 = document.querySelectorAll('#agesafe');
+    elems2.forEach((elem) => {
+      elem.classList.add('peace');
+    });
+    document.getElementById('#agesafe2').classList.add('peace');
+  }
 }
 
 async function getCurrentUrl() {
@@ -84,7 +210,4 @@ async function getCurrentUrl() {
   return checkUrl(tabs[0].url);
 }
 
-checkUrl(getCurrentUrl());
-document
-  .getElementById('checkPage')
-  .addEventListener('click', () => checkUrl(document.getElementById('url').value));
+getCurrentUrl();

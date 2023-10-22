@@ -4,8 +4,8 @@
     "description": "An extension which checks URLs' safety",
     "version": "3",
     "action": {
-      "default_popup": "popup.html"
+      "default_popup": "popup.html",
+      "default_icon": "assets/48.png"
     },
-    "default_locale": "en",
     "permissions": ["activeTab", "tabs"]
   }

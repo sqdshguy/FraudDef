@@ -1,12 +1,114 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-  </head>
-  <body>
-    <input type="text" id="url" />
-    <p id="result"></p>
-    <button id="checkPage">Check Page</button>
-    <script src="popup.js"></script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="assets/style.css" />
+    </head>
+
+    <body>
+        <div class="container">
+            <header>
+                <h1>FraudDef</h1>
+                <a href="settings.html"
+                    ><img src="assets/gear-svgrepo-com.svg" class="settings"
+                /></a>
+            </header>
+
+            <div class="checklist">
+                <div class="element owner" id="parent">
+                    <div class="element-right-container">
+                        <div class="element-header">
+                            <p>Власник</p>
+                        </div>
+                        <p class="error" id="owner"></p>
+                    </div>
+                </div>
+
+                <div class="element" id="parent">
+                    <div class="element-left-container red peace" id="age"></div>
+                    <div class="element-left-container green" id="agesafe2"></div>
+                    <div class="element-right-container">
+                        <div class="element-header">
+                            <p>Вік</p>
+                            <img src="assets/alert.svg" class="alert peace" id="age" />
+                        </div>
+                        <p class="error data" id="domain-registration-1"></p>
+                        <p class="error peace" id="age">
+                            Обережно! Домен новий і може належати шахраям
+                        </p>
+                        <p class="error data" id="domain-registration-2"></p>
+                        <p class="error" id="agesafe">Загроз не виявлено</p>
+                    </div>
+                </div>
+
+                <div class="element" id="parent">
+                    <div class="element-left-container red peace" id="cyrillic"></div>
+                    <div class="element-left-container green" id="cyrillicsafe"></div>
+                    <div class="element-right-container">
+                        <div class="element-header">
+                            <p>Кирилиця, знаки</p>
+                            <img src="assets/alert.svg" class="alert peace" id="cyrillic"/>
+                        </div>
+                        <p class="error peace" id="cyrillic">
+                            В адресі сайту присутні незрозумілі символи або ж
+                            кирилиця
+                        </p>
+                        <p class="error" id="cyrillicsafe">Загроз не виявлено</p>
+                    </div>
+                </div>
+
+                <div class="element" id="parent">
+                    <div class="element-left-container red peace" id="domain"></div>
+                    <div class="element-left-container green" id="domainsafe"></div>
+                    <div class="element-right-container">
+                        <div class="element-header">
+                            <p>Домен</p>
+                            <img src="assets/alert.svg" class="alert peace" id="domain" />
+                        </div>
+                        <p class="error peace" id="domain">
+                            Безкоштовний! Є вірогідність шахрайства
+                        </p>
+                        <p class="error" id="domainsafe">Загроз не виявлено</p>
+                    </div>
+                </div>
+
+                <div class="element" id="parent">
+                    <div class="element-left-container red peace" id="ssl"></div>
+                    <div class="element-left-container green" id="sslsafe"></div>
+                    <div class="element-right-container">
+                        <div class="element-header">
+                            <p>Статус SSL</p>
+                            <img src="assets/alert.svg" class="alert peace" id="ssl" />
+                        </div>
+                        <p class="error peace" id="ssl">
+                            Недійсний! Можливе використання сайту шахраями
+                        </p>
+                        <p class="error" id="sslsafe">
+                            Сертифікація дійсна,<br />Загроз не виявлено
+                        </p>
+                    </div>
+                </div>
+
+                <div class="element lastly" id="parent">
+                    <div class="element-left-container red peace" id="phishing"></div>
+                    <div class="element-left-container green" id="phishingsafe"></div>
+                    <div class="element-right-container">
+                        <div class="element-header">
+                            <p>Можливість фішингу</p>
+                            <img src="assets/alert.svg" class="alert peace" id="phishing" />
+                        </div>
+                        <p class="error peace" id="phishing">
+                            Присутні неспівпадіння з оригінальними адресою або
+                            доменом
+                        </p>
+                        <p class="error" id="phishingsafe">
+                            За результатами перевірки сайт безпечний і ваші дані
+                            захищені від фішингу
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="popup.js"></script>
+    </body>
 </html>
