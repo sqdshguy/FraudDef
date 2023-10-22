@@ -108,7 +108,7 @@ async function checkUrl(url) {
     if (whois) {
       console.log(whois);
       const currentYear = new Date().getFullYear();
-      const creation = whois.data.created || whois.data.creationDate;
+      const creation = whois.data.created || whois.data.creationDate || whois.data.createdOn;
       if (creation) {
         const dateObject = new Date(Date.parse(creation.split(' ')[0]));
         if (dateObject.getFullYear() === currentYear) {
@@ -126,10 +126,10 @@ async function checkUrl(url) {
         document.getElementById('domain-registration-2').textContent = 'Невідомий';
         document.getElementById('agesafe').classList.add('peace');
       }
-      const owner = whois.data.adminOrganization
+      const owner = whois.data.registrantName
                 || whois.data.registrantOrganization
                 || whois.data.registrant
-                || whois.data.registrantName
+                || whois.data.adminOrganization
                 || whois.data.techOrganization
                 || whois.data.techName
                 || whois.data.organization
@@ -199,7 +199,7 @@ async function checkUrl(url) {
     elems2.forEach((elem) => {
       elem.classList.add('peace');
     });
-    document.getElementById('#agesafe2').classList.add('peace');
+    document.getElementById('agesafe2').classList.add('peace');
   }
 }
 
