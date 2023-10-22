@@ -1,4 +1,4 @@
-const paymentDomains = ['olx.ua', 'en.olx.ua', 'something.olx.ua'];
+const paymentDomains = ['olx.ua', 'en.olx.ua', 'something.olx.ua', 'ria.com', 'kness.energy', 'privat24.ua', 'next.privat24.ua'];
 
 function levenshteinDistance(str1, str2) {
   const m = str1.length;
@@ -21,7 +21,7 @@ function similarityCheck(url) {
   const domain = new URL(url).hostname;
   for (let i = 0; i < paymentDomains.length; i += 1) {
     const distance = levenshteinDistance(domain, paymentDomains[i]);
-    if (distance <= 2 && distance !== 0) return false;
+    if (distance <= 3 && distance !== 0) return false;
   }
   return true;
 }
@@ -73,10 +73,10 @@ async function getWhoisData(url) {
 
 function setUnknownOwner() {
   document.getElementById('owner').textContent = 'Невідомий';
-  const elems = document.querySelectorAll('#agesafe');
-  elems.forEach((elem) => {
-    elem.classList.add('peace');
-  });
+  // const elems = document.querySelectorAll('#agesafe');
+  // elems.forEach((elem) => {
+  //   elem.classList.add('peace');
+  // });
 }
 
 async function checkUrl(url) {
@@ -121,6 +121,7 @@ async function checkUrl(url) {
             'domain-registration-1',
           ).textContent = dateObject.toLocaleString();
         } else {
+          oldDomain = true;
           document.getElementById(
             'domain-registration-2',
           ).textContent = dateObject.toLocaleString();
@@ -134,11 +135,15 @@ async function checkUrl(url) {
                 || whois.data.registrant
                 || whois.data.registrantName
                 || whois.data.techOrganization
-                || whois.data.techName;
+                || whois.data.techName
+                || whois.data.organization
+                || whois.data.person;
       if (owner) {
         if (
           owner.toLowerCase().includes('disclosed')
                     || owner.toLowerCase().includes('redacted')
+                    || owner.toLowerCase().includes('privacy')
+                    || owner.toLowerCase().includes('private')
         ) setUnknownOwner();
         else document.getElementById('owner').textContent = owner;
       } else setUnknownOwner();
