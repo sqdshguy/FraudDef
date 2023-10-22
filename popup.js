@@ -73,10 +73,6 @@ async function getWhoisData(url) {
 
 function setUnknownOwner() {
   document.getElementById('owner').textContent = 'Невідомий';
-  // const elems = document.querySelectorAll('#agesafe');
-  // elems.forEach((elem) => {
-  //   elem.classList.add('peace');
-  // });
 }
 
 async function checkUrl(url) {
